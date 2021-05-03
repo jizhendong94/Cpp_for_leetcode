@@ -130,18 +130,18 @@ vector<vector<int>>res;
 
 void backtrace(vector<int>& nums,vector<int>& track)
 {
-    if(nums.size() == track.size())
+    if(nums.size() == track.size())  //触发结束条件
     {
         res.push_back(track);
         return;
     }
     for(int i=0;i<nums.size();i++)
     {
-        if(find(track.begin(),track.end(),nums[i])!=track.end())
+        if(find(track.begin(),track.end(),nums[i])!=track.end())  //排除不合法的选择
             continue;
-        track.push_back(nums[i]);
+        track.push_back(nums[i]);  //做选择
         back_trace(nums,track);
-        track.pop_back();
+        track.pop_back();        //取消选择
     }
 }
 
@@ -151,6 +151,158 @@ vector<vector<int>> permute(vector<int>& nums)
     backtrace(nums,track);
     return res;
 }
+
+
+/* N皇后  51  
+
+n 皇后问题 研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并且使皇后彼此之间不能相互攻击。
+给你一个整数 n ，返回所有不同的 n 皇后问题 的解决方案。
+每一种解法包含一个不同的 n 皇后问题 的棋子放置方案，该方案中 'Q' 和 '.' 分别代表了皇后和空位。
+
+这个问题很经典了，简单解释一下：给你一个 N×N 的棋盘，让你放置 N 个皇后，使得它们不能互相攻击。
+PS：皇后可以攻击同一行、同一列、左上左下右上右下四个方向的任意单位。
+
+*/
+vector<vector<string>>res;
+
+bool valid(vector<string>& board,int row,int col)
+{
+	int n = board.size();
+	//检查列是否有皇后互相冲突
+	for(int i=0;i<n;i++){
+		if(board[i][col]=='Q')
+			return false;
+	}
+	//检查右上方是否有皇后互相冲突
+	for(int i=row-1,j=col+1;i>=0&&j<n;i--,j++){
+		if(board[i][j] == 'Q')
+			return false;
+	}
+	//检查左上方是否有皇后互相攻击
+	for(int i=row-1,j=col-1;i>=0&&j>=0;i--,j--){
+		if(board[i][j]=='Q')
+			return false;
+	}
+	return true;
+}
+//路径：board中小于row的那些行都已经成功放置了皇后
+//选择列表：第row行的所有列都是放置皇后的选择
+//结束条件：row超过了board的最后一行
+void backtrack(vector<string>& board,int row)
+{
+	if(row == board.size()){   //结束条件
+		res.push_back(board);
+		return;
+	}
+	int n = board[row].size();
+	for(int col = 0;col<n;col++){
+		if(!valid(board,row,col)) continue;
+		//做选择
+		board[row][col] ='Q';
+		//进入下一行决策
+		backtrack(board,row+1);
+		//撤销选择
+		board[row][col]='.';
+	}
+}
+
+vector<vector<string>> solveNQueens(int n)
+{
+	vector<string>board(n,vector<string>(n,'.'));
+	backtrack(board,0);
+	return res;
+}
+
+
+/*offer 34  二叉树中和为某一值得路径 
+输入一棵二叉树和一个整数，打印出二叉树中节点值的和为输入整数的所有路径。
+从树的根节点开始往下一直到叶节点所经过的节点形成一条路径。
+
+*/
+
+void backtrack(TreeNode* root,int target,vector<int>& path)
+{
+	if(NULL == root) return;
+	path.push_back(root->val);
+	target -= root->val;
+	if(target == 0 && root->left==NULL && root->right==NULL)
+		res.push_back(path);
+	backtrack(root->left,target,path);
+	backtrack(root->right,target,path);
+	path.pop_back();
+}
+
+vector<vector<int>>PathSum(TreeNode* root,int target)
+{
+	vector<int>path;
+	backtrack(root,target,path);
+	return res;
+}
+
+
+
+
+/* 698 划分K个相等的子集  labuladong 回溯算法
+
+给定一个整数数组  nums 和一个正整数 k，找出是否有可能把
+这个数组分成 k 个非空子集，其总和都相等
+
+*/
+
+bool backtrack(vector<int>& nums,int index,vector<int>& bucket,int target)
+{
+	if(index == nums.size()){
+		//检查所有的桶的数字之和是否都是target
+		for(int i=0;i<bucket.size();i++){
+			if(bucket[i]!=target){
+				return false;
+			}
+		}
+		//成功平分
+		return true;
+	}
+
+	//穷举Nums[index]可能装入的桶
+	for(int i=0;i<bucket.size();i++){
+		//剪枝 桶装满了
+		if(bucket[i]+nums[index] > target){
+			continue;
+		}
+		//将Num[index]装入bucket[i]
+		bucket[i]+=nums[index];
+		//穷举下一个数字
+		if(backtrack(nums,index+1,bucket,target)){
+			return true;
+		}
+		//撤销选择
+		bucket[i]-=nums[index];
+	}
+	return false;
+}
+
+bool canPartitionKSubsets(vector<int>& nums,int k)
+{
+	//排除一些基本情况
+	if(k>num.size()) return false;
+	int sum = 0;
+	for(int v:nums) sum+=v;
+	if(sum%k !=0) return false;
+
+	//k个桶，记录每个桶装的数字之和
+	vector<int>bucker(k,0);
+	int target = sum/k;
+
+    //可以升序排序，提高速率 
+
+	//穷举 看看nums能否划分为K个和为target的子集
+	return backtrack(num,0,bucket,target);
+}
+
+
+
+
+
+
 
 
 
