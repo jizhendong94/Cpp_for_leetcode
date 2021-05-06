@@ -173,6 +173,8 @@ void backtrack(vector<int>& nums,vector<int>& path,vector<bool>visited)
 	}
 	for(int i=0;i<nums.size();i++){
 		if(!visited[i]){
+			//1 nums[i-1] 没用过 说明回溯到了同一层 此时接着用num[i] 则会与 同层用num[i-1] 重复
+            //2 nums[i-1] 用过了 说明此时在num[i-1]的下一层 相等不会重复
 			if(i>=1&&nums[i-1]==nums[i]&&!visited[i-1]) continue;
 			path.push_back(nums[i]);
 			visited[i]=true;
