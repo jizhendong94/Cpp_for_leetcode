@@ -176,6 +176,94 @@ public void flatten(TreeNode root) {
     }
 }
 
+/*297  
+序列化是将一个数据结构或者对象转换为连续的比特位的操作，进而可以将转换后的数据存储在一个文件或者内存中，
+同时也可以通过网络传输到另一个计算机环境，采取相反方式重构得到原数据。
+请设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，
+你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构。
+
+   */
+
+void serialize(TreeNode* root,string& build)
+{
+	if(nullptr == root){
+		build +="#,";
+		return;
+	}
+	build+=to_string(root->val)+","	;
+	serialize(root->left,build);
+	serialize(root->right,build);
+}
+
+string serialize(TreeNode* root){
+	string build;
+	serialize(root,build);
+	return build;
+}
+//
+TreeNode* deserialize(vector<string>& node)
+{
+	if(node.size() == 0) return NULL;
+	string first=node[0];
+	node.erase(node.begin());
+	if("#" == first) return NULL;
+	int rootval = atoi(first.c_str());
+	TreeNode* root = new TreeNode(rootval);
+	root->left=deserialize(node);
+	root->right=deserialize(node);
+	return root;
+}
+TreeNode* deserialize(string data)
+{
+	vector<string>node;
+	size_t pos = data.find(',');
+	while(pos != string::npos){
+		string x = data.substr(0,pos);
+		node.push_back(x);
+		data=data.substr(pos+1);
+		pos=data.find(',');
+	}
+	return deserialize(node);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
