@@ -22,14 +22,14 @@
  */
 
 TreeNode* invertTree(TreeNode* root) {
-	if(NULL == root) return NULL;
-	TreeNode* temp = root->left;
-	root->left = root->right;
-	root->right = temp;
+    if(NULL == root) return NULL;
+    TreeNode* temp = root->left;
+    root->left = root->right;
+    root->right = temp;
 
-	invertTree(root->left);
-	invertTree(root->right);
-	return root;
+    invertTree(root->left);
+    invertTree(root->right);
+    return root;
 }
 
 
@@ -40,31 +40,31 @@ TreeNode* invertTree(TreeNode* root) {
 
 //递归
 TreeNode* mirrorTree(TreeNode* root) {
-	if(NULL == root) return NULL;
-	TreeNode* temp = root->left;
-	root->left = root->right;
-	root->right = temp;
+    if(NULL == root) return NULL;
+    TreeNode* temp = root->left;
+    root->left = root->right;
+    root->right = temp;
 
-	mirrorTree(root->left);
-	mirrorTree(root->right);
-	return root;
+    mirrorTree(root->left);
+    mirrorTree(root->right);
+    return root;
 }
 
 //迭代
 
 TreeNode* mirrorTree(TreeNode* root) {
-	if(NULL == root) return root;
-	queue<TreeNode*>q;
-	q.push(root);
-	while(!q.empty())
-	{
-		TreeNode* temp = q.front();
-		q.pop();
-		swap(temp->left,temp->right);
-		if(temp->left) q.push(temp->left);
-		if(temp->right) q.push(temp->right);
-	}
-	return root;
+    if(NULL == root) return root;
+    queue<TreeNode*>q;
+    q.push(root);
+    while(!q.empty())
+    {
+        TreeNode* temp = q.front();
+        q.pop();
+        swap(temp->left,temp->right);
+        if(temp->left) q.push(temp->left);
+        if(temp->right) q.push(temp->right);
+    }
+    return root;
 }
 
 /*116    填充每个节点的下一个右侧节点的指针  
@@ -84,41 +84,41 @@ TreeNode* mirrorTree(TreeNode* root) {
 
 void connectTwoNode(Node* node1,Node* node2)
 {
-	if(NULL == node1 || NULL == node2) return;
-	//前序遍历位置 将传入的两个节点连接
-	node1->next = node2;
-	//将相同父节点的两个节点连接
-	connectTwoNode(node1->left,node1->right);
-	connectTwoNode(node2->left,node2->right);
+    if(NULL == node1 || NULL == node2) return;
+    //前序遍历位置 将传入的两个节点连接
+    node1->next = node2;
+    //将相同父节点的两个节点连接
+    connectTwoNode(node1->left,node1->right);
+    connectTwoNode(node2->left,node2->right);
 
-	//连接跨越父节点的两个子节点
-	connectTwoNode(node1->right,node2->left);
+    //连接跨越父节点的两个子节点
+    connectTwoNode(node1->right,node2->left);
 }
 Node* connect(Node* root) {
-	if(NULL == root) return NULL;
-	connectTwoNode(root->left,root->right);
-	return root;
+    if(NULL == root) return NULL;
+    connectTwoNode(root->left,root->right);
+    return root;
 }
 
 //迭代方式
 Node* connect(Node* root) {
-	if(NULL == root) return NULL;
-	queue<Node*>q;
-	q.push(root);
-	while(!q.empty())
-	{
-		int size = q.size();
-		for(int i=0;i<size;i++)
-		{
-			Node* temp = q.front();
-			q.pop();
-			if(i!=size-1)
-				temp->next = q.front();
-			if(temp->left)  q.push(temp->left);
-			if(temp->right) q.push(temp->right);
-		}
-	}
-	return root;
+    if(NULL == root) return NULL;
+    queue<Node*>q;
+    q.push(root);
+    while(!q.empty())
+    {
+        int size = q.size();
+        for(int i=0;i<size;i++)
+        {
+            Node* temp = q.front();
+            q.pop();
+            if(i!=size-1)
+                temp->next = q.front();
+            if(temp->left)  q.push(temp->left);
+            if(temp->right) q.push(temp->right);
+        }
+    }
+    return root;
 }
 
 
@@ -132,25 +132,25 @@ Node* connect(Node* root) {
 
 //定义 将以root为根的树拉平为链表
 void flatten(TreeNode* root) {
-	if(NULL == root) return;
-	flatten(root->left);
-	flatten(root->right);
+    if(NULL == root) return;
+    flatten(root->left);
+    flatten(root->right);
 
-	//后序遍历
-	//左右子树已经被拉平成了一个链表
-	TreeNode* left = root->left;
-	TreeNode* right = root->right;
+    //后序遍历
+    //左右子树已经被拉平成了一个链表
+    TreeNode* left = root->left;
+    TreeNode* right = root->right;
 
-	//将左子树 作为右子树
-	root->left = NULL;
-	root->right = left;
+    //将左子树 作为右子树
+    root->left = NULL;
+    root->right = left;
 
-	//将原先的右子树接到当前右子树的末端
-	TreeNode* p =root;
-	while(p->right != NULL){
-		p=p->right;
-	}
-	p->right = right;
+    //将原先的右子树接到当前右子树的末端
+    TreeNode* p =root;
+    while(p->right != NULL){
+        p=p->right;
+    }
+    p->right = right;
 }
 
 //迭代
@@ -177,122 +177,148 @@ public void flatten(TreeNode root) {
 }
 
 /*297  
-序列化是将一个数据结构或者对象转换为连续的比特位的操作，进而可以将转换后的数据存储在一个文件或者内存中，
-同时也可以通过网络传输到另一个计算机环境，采取相反方式重构得到原数据。
-请设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，
-你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构。
+  序列化是将一个数据结构或者对象转换为连续的比特位的操作，进而可以将转换后的数据存储在一个文件或者内存中，
+  同时也可以通过网络传输到另一个计算机环境，采取相反方式重构得到原数据。
+  请设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，
+  你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构。
 
-   */
+ */
 
 void serialize(TreeNode* root,string& build)
 {
-	if(nullptr == root){
-		build +="#,";
-		return;
-	}
-	build+=to_string(root->val)+","	;
-	serialize(root->left,build);
-	serialize(root->right,build);
+    if(nullptr == root){
+        build +="#,";
+        return;
+    }
+    build+=to_string(root->val)+","	;
+    serialize(root->left,build);
+    serialize(root->right,build);
 }
 
 string serialize(TreeNode* root){
-	string build;
-	serialize(root,build);
-	return build;
+    string build;
+    serialize(root,build);
+    return build;
 }
 //
 TreeNode* deserialize(vector<string>& node)
 {
-	if(node.size() == 0) return NULL;
-	string first=node[0];
-	node.erase(node.begin());
-	if("#" == first) return NULL;
-	int rootval = atoi(first.c_str());
-	TreeNode* root = new TreeNode(rootval);
-	root->left=deserialize(node);
-	root->right=deserialize(node);
-	return root;
+    if(node.size() == 0) return NULL;
+    string first=node[0];
+    node.erase(node.begin());
+    if("#" == first) return NULL;
+    int rootval = atoi(first.c_str());
+    TreeNode* root = new TreeNode(rootval);
+    root->left=deserialize(node);
+    root->right=deserialize(node);
+    return root;
 }
 TreeNode* deserialize(string data)
 {
-	vector<string>node;
-	size_t pos = data.find(',');
-	while(pos != string::npos){
-		string x = data.substr(0,pos);
-		node.push_back(x);
-		data=data.substr(pos+1);
-		pos=data.find(',');
-	}
-	return deserialize(node);
+    vector<string>node;
+    size_t pos = data.find(',');
+    while(pos != string::npos){
+        string x = data.substr(0,pos);
+        node.push_back(x);
+        data=data.substr(pos+1);
+        pos=data.find(',');
+    }
+    return deserialize(node);
 }
 
 /*236 二叉树的最近公共祖先
-给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+  给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
 
-百度百科中最近公共祖先的定义为：“对于有根树 T 的两个节点 p、q，
-最近公共祖先表示为一个节点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”
+  百度百科中最近公共祖先的定义为：“对于有根树 T 的两个节点 p、q，
+  最近公共祖先表示为一个节点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”
 
-*/
+ */
 
 TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-	if(NULL == root || root==p || root ==q ) return root;
+    if(NULL == root || root==p || root ==q ) return root;
 
-	TreeNode* left = lowestCommonAncestor(root->left,p,q);
-	TreeNode* right = lowestCommonAncestor(root->right,p,q);
-	if(NULL == left) return right;
-	if(NULL == right) return left;
+    TreeNode* left = lowestCommonAncestor(root->left,p,q);
+    TreeNode* right = lowestCommonAncestor(root->right,p,q);
+    if(NULL == left) return right;
+    if(NULL == right) return left;
 
-	return root;
+    return root;
 }
 
 
 
 /*222  完全二叉树的节点个数
-给你一棵 完全二叉树 的根节点 root ，求出该树的节点个数。
+  给你一棵 完全二叉树 的根节点 root ，求出该树的节点个数。
 
-完全二叉树 的定义如下：在完全二叉树中，除了最底层节点可能没填满外，其余每层节点数都达到最大值，
-并且最下面一层的节点都集中在该层最左边的若干位置。若最底层为第 h 层，则该层包含 1~ 2h 个节点。
-   */
+  完全二叉树 的定义如下：在完全二叉树中，除了最底层节点可能没填满外，其余每层节点数都达到最大值，
+  并且最下面一层的节点都集中在该层最左边的若干位置。若最底层为第 h 层，则该层包含 1~ 2h 个节点。
+ */
 
 //O(N) 解法 
 int countNodes(TreeNode* root)
 {
-	if(nullptr == root) return 0;
-	return 1+countNodes(root->left)+countNodes(root->right);
+    if(nullptr == root) return 0;
+    return 1+countNodes(root->left)+countNodes(root->right);
 }
 
 
 //O(logN * logN)
 int countNodes(TreeNode* root)
 {
-	TreeNode* left = root,*right=root;
-	int hl=0,hr=0;
-	while(left!=NULL){
-		left=left->left;
-		hl++;
-	}
+    TreeNode* left = root,*right=root;
+    int hl=0,hr=0;
+    while(left!=NULL){
+        left=left->left;
+        hl++;
+    }
 
-	while(right!=NULL){
-		right=right->right;
-		hr++;
-	}
-	 // 如果左右子树的高度相同，则是一棵满二叉树
-	if(hl==hr){
-		return pow(2,hl)-1;
-	}
-	// 如果左右高度不同，则按照普通二叉树的逻辑计算
-	return 1+countNodes(root->left)+countNodes(root->right);
+    while(right!=NULL){
+        right=right->right;
+        hr++;
+    }
+    // 如果左右子树的高度相同，则是一棵满二叉树
+    if(hl==hr){
+        return pow(2,hl)-1;
+    }
+    // 如果左右高度不同，则按照普通二叉树的逻辑计算
+    return 1+countNodes(root->left)+countNodes(root->right);
+}
+
+/*offer 55 二叉树的深度
+
+  输入一棵二叉树的根节点，求该树的深度。从根节点到叶节点依次经过的节点（含根、叶节点）形成树的一条路径，最长路径的长度为树的深度。
+ */
+
+int maxDepth(TreeNode* root)
+{
+    if(NULL == root) return 0;
+    int left = maxDepth(root->left);
+    int right = maxDepth(root->right);
+
+    return 1+max(left,right);
 }
 
 
 
 
-
-
-
-
-
-
+int maxDepth(TreeNode* root) {
+    if(NULL == root) return 0;
+    queue<TreeNode*>q;
+    q.push(root);
+    int depth=0;
+    while(!q.empty())
+    {
+        int size = q.size();
+        while(size--){
+            TreeNode* temp = q.front();
+            q.pop();
+            if(temp->left) q.push(temp->left);
+            if(temp->right) q.push(temp->right);
+        }
+        depth++;
+    }
+    return depth;
+}
 
 
 
