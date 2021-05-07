@@ -103,7 +103,7 @@ bool isInBST(TreeNode* root,int target)
 bool isInBST(TreeNode* root,int target)
 {
 	if(NULL == root) return false;
-	if(target == root->val) return false;
+	if(target == root->val) return true;
 	if(root->val < target)
 		return isInBST(root->right,target);
 	if(root->val > target)
@@ -155,9 +155,63 @@ TreeNode* delNode(TreeNode* root,int key)
 	return root;
 }
 
+/*  1373 
+给你一棵以 root 为根的 二叉树 ，请你返回 任意 二叉搜索子树的最大键值和。
+
+二叉搜索树的定义如下：
+
+任意节点的左子树中的键值都 小于 此节点的键值。
+任意节点的右子树中的键值都 大于 此节点的键值。
+任意节点的左子树和右子树都是二叉搜索树。
+*/
 
 
 
+int maxsum = 0;
+//  函数返回 int[]{ isBST, min, max, sum}
+/*
+traverse(root) 返回一个大小为4的数组，暂且成为res:
+res[0]记录以root为根的二叉树是否是BST,1代表是BST，0代表不是BST
+res[1]记录以root为跟的二叉树所有节点的最小值
+res[2]记录root 为根的二叉树所有节点中的最大值
+res[3] 记录以 root 为根的二叉树所有节点值之和。
+   */
+
+vector<int> traverse(TreeNode* root)
+{
+	//base case 
+	if(nullptr == root){
+		return vector<int>{1,INT_MAX,INT_MIN,0};
+	}
+
+	//递归计算左右子树
+	vector<int>left=traverse(root->left);
+	vector<int>right=traverse(root->right);
+
+	vector<int>res(4,0);
+	//这个 if 在判断以 root 为根的二叉树是不是 BST
+	if(left[0]==1 && right[0]==1 && root->val>left[2] && root->val<right[1]){
+		//以 root 为根的二叉树是 BST
+		res[0]=1;
+		//计算以 root 为根的这棵 BST 的最小值
+		res[1]=min(root->val,left[1]);
+		//计算以 root 为根的这棵 BST 的最大值
+		res[2]=max(root->val,right[2]);
+		//计算以 root 为根的这棵 BST 所有节点之和
+		res[3]=root->val+left[3]+right[3];
+		//更新全局变量
+		maxsum = max(maxsum,res[3]);
+	}else{
+		res[0]=0;
+		//其他的值都没必要计算了，因为用不到
+	}
+	return res;
+}
+
+int maxSumBST(TreeNode* root) {
+    traverse(root);
+    return maxsum;
+}
 
 
 
