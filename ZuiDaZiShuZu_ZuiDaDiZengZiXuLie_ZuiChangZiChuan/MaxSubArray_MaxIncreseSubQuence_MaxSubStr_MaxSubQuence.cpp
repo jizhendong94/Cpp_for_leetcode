@@ -17,6 +17,43 @@ int maxsubarray(vector<int>& nums)
 
 }
 
+/*674  最长连续递增序列   子串  
+  给定一个未经排序的整数数组，找到最长且 连续递增的子序列，并返回该序列的长度。
+
+  连续递增的子序列 可以由两个下标 l 和 r（l < r）确定，如果对于每个 l <= i < r，都有 nums[i] < nums[i + 1] ，
+  那么子序列 [nums[l], nums[l + 1], ..., nums[r - 1], nums[r]] 就是连续递增子序列。
+
+    count 为当前元素峰值，ans为最大峰值
+    初始化 count = 1
+    从 0 位置开始遍历，遍历时根据前后元素状态判断是否递增，递增则 count++，递减则 count=1
+    如果 count>ans，则更新 ans
+    直到循环结束
+
+ */
+
+int findLengthOfLCIS(vector<int>& nums) {
+    int n=nums.size();
+    if(n == 0) return 0;
+    int res = 1;
+    int count  = 1;
+    for(int i=1;i<n;i++)
+    {
+        if(nums[i]>nums[i-1]){
+            count++;
+        }else{
+            count=1;
+        }
+        res = max(res,count);
+    }
+    return res;
+}
+
+
+
+/*300
+  给你一个整数数组 nums ，找到其中最长严格递增子序列的长度。
+  dp[i] 以i结尾的LIS
+ */
 //最长递增子序列
 int maxincrease(vector<int>& nums)
 {
@@ -35,6 +72,56 @@ int maxincrease(vector<int>& nums)
         res=max(res,dp[i]);
     return res;
 }
+
+/*673 最长递增子序列的个数
+
+  给定一个未排序的整数数组，找到最长递增子序列的个数。
+
+  我们需要定义两个vector数组：
+  vector<int> dp(n,1): 表示以nums[i]nums[i]结尾的LISLIS长度
+  vector<int> count(n,1): 表示以nums[i]nums[i]结尾的LISLIS的组合的个数
+
+  (1)当dp[j]+1 > dp[i]时,意味着我们第一次找到这个组合
+  (2)当dp[j]+1 == dp[i]时,意味着我们不是第一次找到这个组合
+
+  当我们遇到情况(1)时(dp[j]+1 > dp[i]),只需要将LISLIS的长度加一，并且将组合数设为与nums[j]nums[j]一样即可
+  当我们遇到情况(2)时(dp[j]+1 == dp[i]),只需要将nums[j]nums[j]的组合数添加上去即可
+
+ */
+int findNumberOfLIS(vector<int>& nums) {
+    int n =nums.size();
+    if(n<=0) return n;
+
+    vector<int>dp(n,1);
+    vector<int>count(n,1);
+
+    for(int i=1;i<n;i++)
+    {
+        for(int j=0;j<i;j++)
+        {
+            if(nums[j]<nums[i])
+            {
+                if(dp[j]+1>dp[i]){
+                    dp[i]=dp[j]+1;
+                    count[i]=count[j];
+                }else if(dp[j]+1 == dp[i]){
+                    count[i]+=count[j];
+                }
+            }
+        }
+    }
+    int max_len = 0;
+    for(int i:dp)
+        max_len = max(max_len,i);
+    int res =0;
+    for(int i=0;i<n;i++){
+        if(dp[i] == max_len)
+            res += count[i];
+    }
+    return res;
+
+}
+
 
 
 //最长公共子序列
@@ -215,18 +302,18 @@ string longestPalindrome(string s)
 }
 
 /*516 最长回文子序列
-给定一个字符串 s ，找到其中最长的回文子序列，并返回该序列的长度。可以假设 s 的最大长度为 1000 。
+  给定一个字符串 s ，找到其中最长的回文子序列，并返回该序列的长度。可以假设 s 的最大长度为 1000 。
 
-思路：
-dp 数组的定义是：在子串s[i..j]中，最长回文子序列的长度为dp[i][j]。一定要记住这个定义才能理解算法。
-1 首先明确一下 base case，如果只有一个字符，显然最长回文子序列长度是 1，也就是dp[i][j] = 1,(i == j)。
+  思路：
+  dp 数组的定义是：在子串s[i..j]中，最长回文子序列的长度为dp[i][j]。一定要记住这个定义才能理解算法。
+  1 首先明确一下 base case，如果只有一个字符，显然最长回文子序列长度是 1，也就是dp[i][j] = 1,(i == j)。
 
-2 因为i肯定小于等于j，所以对于那些i > j的位置，根本不存在什么子序列，应该初始化为 0。
+  2 因为i肯定小于等于j，所以对于那些i > j的位置，根本不存在什么子序列，应该初始化为 0。
 
-3 另外，看看刚才写的状态转移方程，想求dp[i][j]需要知道dp[i+1][j-1]，dp[i+1][j]，dp[i][j-1]这三个位置；
-再看看我们确定的 base case，填入 dp 数组之后是这样：
+  3 另外，看看刚才写的状态转移方程，想求dp[i][j]需要知道dp[i+1][j-1]，dp[i+1][j]，dp[i][j-1]这三个位置；
+  再看看我们确定的 base case，填入 dp 数组之后是这样：
 
-*/
+ */
 
 int longestPalindromeSubseq(string s)
 {
