@@ -214,7 +214,27 @@ int maxSumBST(TreeNode* root) {
 }
 
 
+/*面试题 04.02. 最小高度树
+给定一个有序整数数组，元素各不相同且按升序排列，编写一个算法，创建一棵高度最小的二叉搜索树。
 
+思路：
+用nums数组的中间值mid作为根节点，根据mid划分左子数组和右子数组。左子数组构建左子树，右子数组构建右子树。
+*/
+TreeNode* dfs(vector<int>& nums,int left,int right)
+{
+    if(left > right) return nullptr;
+    int mid = left + (right-left)/2;
+    TreeNode* root = new TreeNode(nums[mid]);
+    root->left = dfs(nums,left,mid-1);
+    root->right = dfs(nums,mid+1,right);
+    return root;
+}
+
+TreeNode* sortedArrayToBST(vector<int>& nums)
+{
+    if(nums.size()== 0) return nullptr;
+    return dfs(nums,0,num.size()-1);
+}
 
 
 
