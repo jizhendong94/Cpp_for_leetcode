@@ -17,8 +17,8 @@ bool dfs(vector<vector<char>>& board,string word,int i,int j,int k)
 	if(k==word.size()-1) return true;
 
 	board[i][j]='\0';
-	res=dfs(board,word,i-1,j,k)||dfs(board,word,i+1,j,k)||
-		dfs(board,word,i,j-1,k)||dfs(board,word,i,j+1);
+	res=dfs(board,word,i-1,j,k+1)||dfs(board,word,i+1,j,k+1)||
+		dfs(board,word,i,j-1,k+1)||dfs(board,word,i,j+1,k+1);
 	board[i][j]=word[k];
 	return res;
 }
@@ -29,7 +29,7 @@ bool exist(vector<vector<char>>& board, string word) {
 	{
 		for(int j=0;j<cols;j++)
 		{
-			if(dfs(board,word,i,j,k))
+			if(dfs(board,word,i,j,0))
 				return true;
 		}
 	}
