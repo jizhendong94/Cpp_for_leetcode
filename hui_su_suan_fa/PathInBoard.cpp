@@ -341,9 +341,9 @@ bool canPartitionKSubsets(vector<int>& nums,int k)
 	return backtrack(num,0,bucket,target);
 }
 
-/* 78  z子集
+/* 78  子集
    问题很简单，输入一个不包含重复数字的数组，要求算法输出这些数字的所有子集。
-
+   //不含重复元素 
  */
 vector<vector<int>>res;
 
@@ -363,6 +363,38 @@ vector<vector<int>> subsets(vector<int>& nums) {
 	backtrack(nums,0,path);
 	return res;
 }
+
+
+/* 90 子集 2
+
+给你一个整数数组 nums ，其中可能包含重复元素，请你返回该数组所有可能的子集（幂集）。
+解集 不能 包含重复的子集。返回的解集中，子集可以按 任意顺序 排列。
+
+*/
+vector<vector<int>>res;
+
+void backtrack(vector<int>& nums,int start,vector<int>& path)
+{
+    res.push_back(path);
+    for(int i = start;i<nums.size();i++){
+        if(i>start&&nums[i]==nums[i-1]) continue;
+        path.push_back(nums[i]);
+        backtrack(nums,i+1,path);
+        path.pop_back();
+    }
+}
+
+vector<vector<int>> subsetsWithDup(vector<int>& nums)
+{
+    vector<int>path;
+    sort(nums.begin(),nums.end());
+    backtrack(nums,0,path);
+    return res;
+}
+
+
+
+
 
 /* 38 offer  字符串的排列
 

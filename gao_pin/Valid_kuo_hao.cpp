@@ -63,11 +63,12 @@ bool isValid(string str)
   "()()()"
 ]
 
+left:左括号的个数  right：右括号的个数
 */
 
 void dfs(string path,int left,int right,int n,vector<string>& res)
 {
-    if(left>n || right>left) return;
+    if(left>n ||right>n|| right>left) return;
     if(path.size()==n*2){
         res.push_back(path);
         return;
@@ -84,6 +85,22 @@ vector<string> generateParenthesis(int n)
     dfs("",0,0,n,res);
     return res;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
