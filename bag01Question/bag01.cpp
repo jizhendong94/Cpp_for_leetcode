@@ -4,8 +4,11 @@
  。其中第i个物品的重量为wt[i]，价值为val[i]，现在让你用这个背包装物品，最多能装的价值是多少？
 
  */
+//dp[i][w]表示：对于前i个物品，当前背包的容量为w时，这种情况下可以装下的最大价值是dp[i][w]。
+//base case base case 就是dp[0][..] = dp[..][0] = 0，因为没有物品或者背包没有空间的时候，能装的最大价值就是 0。
 int knapsack(int W,int N,vector<int>& wt,vector<int>& val)
 {
+    //vector全填入0 base case 已经初始化
     vector<vector<int>>dp(N+1,vector<int>(W+1,0));
     for(int i=1;i<=n;i++)
     {
@@ -16,6 +19,7 @@ int knapsack(int W,int N,vector<int>& wt,vector<int>& val)
                 dp[i][w]=dp[i-1][w];
             }
             else{
+                //装入或者不装入 择优
                 dp[i][w]=max(dp[i-1][w-wt[i-1]]+val[i-1],dp[i-1][w]);
             }
         }
@@ -62,10 +66,15 @@ bool canPartition(vector<int>& nums)
 /*
  *给定不同面额的硬币和一个总金额。写出函数来计算可以凑成总金额的硬币组合数。
  假设每一种面额的硬币有无限个。
- 完全背包问
+
+ 完全背包问:
+
+ 有一个背包，最大容量为amount，有一系列物品coins，每个物品的重量为coins[i]，
+ 每个物品的数量无限。请问有多少种方法，能够把背包恰好装满
 */
-
-
+// 若只使用coins中的前i个硬币的面值，若想凑出金额j，有dp[i][j]种凑法。
+//base case 为dp[0][..] = 0， dp[..][0] = 1。因为如果不使用任何硬币面值，就无法凑出任何金额；
+//如果凑出的目标金额为 0，那么“无为而治”就是唯一的一种凑法。
 
 int coinchange2(int amount,vector<int>& coins)
 {
@@ -85,6 +94,30 @@ int coinchange2(int amount,vector<int>& coins)
     }
     return dp[n][amount];
 }
+
+/*322  零钱兑换 凑硬币 1 
+dp[i] = x表示，当目标金额为i时，至少需要x枚硬币。
+
+*/
+
+int coinChange1(vector<int>& coins,int amount)
+{
+    //数组大小为amount+1  初始值amount+1
+    vector<int>dp(amount+1,amount+1);
+    //base case 
+    dp[0]=[0];
+    for(int i=0;i<dp.size();i++)
+    {
+        for(int coin:coins){
+            //子问题无解  跳过
+            if(i-coin<0) continue;
+            dp[i]=min(dp[i],1 + dp[i-coin]);
+        }
+    }
+    return (dp[amount] == amount+1?-1:dp[amount]);
+}
+
+
 
 
 
