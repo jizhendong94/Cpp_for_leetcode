@@ -298,9 +298,6 @@ int maxDepth(TreeNode* root)
     return 1+max(left,right);
 }
 
-
-
-
 int maxDepth(TreeNode* root) {
     if(NULL == root) return 0;
     queue<TreeNode*>q;
@@ -320,7 +317,35 @@ int maxDepth(TreeNode* root) {
     return depth;
 }
 
+/*111 二叉树的最小深度
+给定一个二叉树，找出其最小深度。
+最小深度是从根节点到最近叶子节点的最短路径上的节点数量。
+说明：叶子节点是指没有子节点的节点。
+*/
 
+int minDepth(TreeNode* root)
+{
+    if(NULL == root) return 0;
+    queue<TreeNode*>q;
+    q.push(root);
+    int depth=1;
+    while(q.size())
+    {
+        int sz = q.size();
+        while(sz--){
+            TreeNode* temp=q.front();
+            q.pop();
+            if(temp->left == nullptr && temp->right == nullptr)
+                return depth;
+            if(temp->left)
+                q.push(temp->left);
+            if(temp->right)
+                q.push(temp->right);
+        }
+        depth++;
+    }
+    return depth;
+}
 
 
 

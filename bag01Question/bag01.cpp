@@ -80,7 +80,7 @@ int coinchange2(int amount,vector<int>& coins)
 {
     int n = coins.length();
     vector<vector<int>>dp(n+1,vector<int>(amount+1,0));
-    for(int i=0;i<=n;i++)
+    for(int i=0;i<=n;i++)  //i=1 i=0 start all OK 
         dp[i][0] = 1;
     for(int i=1;i<=n;i++)
     {
