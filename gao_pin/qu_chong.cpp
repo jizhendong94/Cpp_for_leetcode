@@ -73,6 +73,84 @@ ListNode* deleteDuplicates(ListNode* head) {
 	return dummynode->next;
 }
 
+/*删除链表中的重复元素 III 
+有序链表 增序 删除链表中的重复元素 使每个重复元素剩余两次
+2  3  3  4  4  4  5  6  6  6  6  6  7  7  8
+2  3  3  4  4  5  6  6  7  7  8
+
+
+2  2  2  3  3  4  5  6  6  6  6
+2  2  3  3  4  5  6  6
+
+*/
+
+ListNode* DelListNode(ListNode* head)
+{
+    ListNode* dummynode = new ListNode;
+    dummynode->val = -1;
+    dummynode->next = head;
+    ListNode* pre = dummynode;
+    ListNode* pf = head,*fast=head;
+    while(fast){
+        while(fast->next && fast->val == fast->next->val){
+            pf = fast;
+            fast=fast->next;
+        }
+        pre->next = pf;
+        pre=pre->next;
+        if(pf && pf->next && pf->val == pf->next->val){
+            pf = pf->next->next;
+            pre=pre->next;
+            fast = pf;
+        }else{
+            pf = pf->next;
+            fast=pf;
+        }
+
+    }
+    pre->next=nullptr;
+    return dummynode->next;
+}
+
+ListNode* creatList(vector<int>& nums)
+{
+    ListNode* head = new ListNode;
+    head->val = -1;
+    head->next = nullptr;
+    ListNode* p = head;
+    for(int i=0;i<nums.size();i++){
+        ListNode* tempnode = new ListNode;
+        tempnode->val = nums[i];
+        tempnode->next = nullptr;
+        p->next = tempnode;
+        p=p->next;
+    }
+    return head->next;
+}
+void printList(ListNode* head){
+    ListNode* temp = head;
+    while(temp){
+        cout<<temp->val<<"  ";
+        temp=temp->next;
+    }
+    cout<<endl;
+    return;
+}
+int main()
+{
+    vector<int>nums={2,2,2,3,3,4,5,6,6,6,6};
+    //vector<int>nums={2,3,3,4,4,4,5,6,6,6,6,6,7,7,8};
+    ListNode* head = creatList(nums);
+    printList(head);
+    ListNode* head_new = DelListNode(head);
+    printList(head_new);
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 /*27  移除元素
   给你一个数组 nums 和一个值 val，你需要 原地 移除所有数值等于 val 的元素，并返回移除后数组的新长度。
   不要使用额外的数组空间，你必须仅使用 O(1) 额外空间并 原地 修改输入数组。
