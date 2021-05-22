@@ -8,7 +8,7 @@ string multiply(string num1,string num2)
 {
 	int m=num1.size(),n=num2.size();
 	//最多m+n 位数
-	vector<int>(m+n,0);
+	vector<int>res(m+n,0);
 
 	//从个位数开始相乘
 	for(int i=m-1;i>=0;i--)

@@ -64,7 +64,7 @@ int maxincrease(vector<int>& nums)
         for(int j=0;j<i;j++)
         {
             if(nums[j]<nums[i])
-                dp[i]=max(nums[i],dp[j]+1);
+                dp[i]=max(dp[i],dp[j]+1);
         }
     }
     int res = 0;
@@ -284,7 +284,7 @@ string palindrome(string s,int left,int right)
         left--;
         right++;
     }
-    return s.substr(s,left+1,right-left-1);
+    return s.substr(left+1,right-left-1);
 }
 
 string longestPalindrome(string s)
