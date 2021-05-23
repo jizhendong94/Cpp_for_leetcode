@@ -174,7 +174,7 @@ void backtrack(vector<int>& nums,vector<int>& path,vector<bool>visited)
 	for(int i=0;i<nums.size();i++){
 		if(!visited[i]){
 			//1 nums[i-1] 没用过 说明回溯到了同一层 此时接着用num[i] 则会与 同层用num[i-1] 重复
-            //2 nums[i-1] 用过了 说明此时在num[i-1]的下一层 相等不会重复
+			//2 nums[i-1] 用过了 说明此时在num[i-1]的下一层 相等不会重复
 			if(i>=1&&nums[i-1]==nums[i]&&!visited[i-1]) continue;
 			path.push_back(nums[i]);
 			visited[i]=true;
@@ -343,7 +343,7 @@ bool canPartitionKSubsets(vector<int>& nums,int k)
 
 /* 78  子集
    问题很简单，输入一个不包含重复数字的数组，要求算法输出这些数字的所有子集。
-   //不含重复元素 
+//不含重复元素 
  */
 vector<vector<int>>res;
 
@@ -367,29 +367,29 @@ vector<vector<int>> subsets(vector<int>& nums) {
 
 /* 90 子集 2
 
-给你一个整数数组 nums ，其中可能包含重复元素，请你返回该数组所有可能的子集（幂集）。
-解集 不能 包含重复的子集。返回的解集中，子集可以按 任意顺序 排列。
+   给你一个整数数组 nums ，其中可能包含重复元素，请你返回该数组所有可能的子集（幂集）。
+   解集 不能 包含重复的子集。返回的解集中，子集可以按 任意顺序 排列。
 
-*/
+ */
 vector<vector<int>>res;
 
 void backtrack(vector<int>& nums,int start,vector<int>& path)
 {
-    res.push_back(path);
-    for(int i = start;i<nums.size();i++){
-        if(i>start&&nums[i]==nums[i-1]) continue;
-        path.push_back(nums[i]);
-        backtrack(nums,i+1,path);
-        path.pop_back();
-    }
+	res.push_back(path);
+	for(int i = start;i<nums.size();i++){
+		if(i>start&&nums[i]==nums[i-1]) continue;
+		path.push_back(nums[i]);
+		backtrack(nums,i+1,path);
+		path.pop_back();
+	}
 }
 
 vector<vector<int>> subsetsWithDup(vector<int>& nums)
 {
-    vector<int>path;
-    sort(nums.begin(),nums.end());
-    backtrack(nums,0,path);
-    return res;
+	vector<int>path;
+	sort(nums.begin(),nums.end());
+	backtrack(nums,0,path);
+	return res;
 }
 
 
@@ -402,8 +402,74 @@ vector<vector<int>> subsetsWithDup(vector<int>& nums)
  */
 
 
+/*17 电话号码的组合
 
+  给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。答案可以按 任意顺序 返回。
+  给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。
 
+  输入：digits = "23"
+  输出：["ad","ae","af","bd","be","bf","cd","ce","cf"]
+ */
+void backtrace(vector<string>& res,string str,string digits,unordered_map<char,string>& table,int k)
+{
+	if(str.size() == digits.size()){
+		res.push_back(str);
+		return;
+	}
+	string tmp = table[digits[k]];
+	for(char w:tmp){
+		str+=w;
+		backtrace(res,str,digits,table,k+1);
+		str.pop_back();
+	}
+	return;
+}
+vector<string> letterCombinations(string digits)
+{
+	unordered_map<char,string>table{
+		{'2',"abc"},{'3',"def"},{'4',"ghi"},
+			{'5',"jkl"},{'6',"mno"},{'7',"pqrs"},
+			{'8',"tuv"},{'9',"wxyz"}
+	};
+	vector<string>res;
+	if(digits.size() ==0 ) return res;
+	backtrace(res,"",digits,table,0);
+	return res;
+}
+
+/*39  组合总和
+  给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+  candidates 中的数字可以无限制重复被选取。
+
+  说明：
+  所有数字（包括 target）都是正整数。
+  解集不能包含重复的组合。 
+
+ */
+vector<vector<int>>res;
+vector<int>path;
+void backtrace(vector<int>& candidates,int target,int sum,int startIndex)
+{
+	if(sum > target) return;
+	if(sum == target){
+		res.push_back(path);
+		return;
+	}
+	//如果sum+candidates[i]>target 就终止
+	for(int i=startIndex;i<candidates.size()&& sum+candidates[i]<=target;i++)
+	{
+		sum += candidates[i];
+		path.push_back(candidates[i]);
+		backtrace(candidates,target,sum,i); //不用i+1,可以重复
+		sum -= candidates[i];//回溯
+		path.pop_back(); //回溯
+	}
+}
+vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+	sort(candidates.begin(),candidates.end());
+	backtrace(candidates,target,0,0);
+	return res;
+}
 
 
 

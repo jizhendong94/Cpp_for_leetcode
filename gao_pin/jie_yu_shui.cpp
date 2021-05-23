@@ -145,6 +145,59 @@ int trapRainWater(vector<vector<int>>& heightMap) {
 	return res; 
 }
 
+/*11 盛最多水的容器
+给你 n 个非负整数 a1，a2，...，an，每个数代表坐标中的一个点 (i, ai) 。
+在坐标内画 n 条垂直线，垂直线 i 的两个端点分别为 (i, ai) 和 (i, 0) 。
+找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
+
+示例 2：
+
+输入：height = [1,1]
+输出：1
+示例 3：
+
+输入：height = [4,3,2,1,4]
+输出：16
+示例 4：
+
+输入：height = [1,2,1]
+输出：2
+
+思路：和接雨水思路一致，结果是求最大值
+*/
+
+int maxArea(vector<int>& height)
+{
+	int res = 0;
+	int n = height.size();
+	if(n<=1) return 0;
+	int left=0,right=n-1;
+	int l_max = height[left];
+	int r_max = height[right];
+	while(left<=right){
+		l_max = max(l_max,height[left]);
+		r_max = max(r_max,height[right]);
+
+		if(l_max<r_max){
+			int temp = l_max*(right-left);
+			res = max(res,temp);
+			left++;
+		}else{
+			int temp = r_max*(right-left);
+			res = max(res,temp);
+			right--;
+		}
+	}
+	return res;
+}
+
+
+
+
+
+
+
+
 
 
 
