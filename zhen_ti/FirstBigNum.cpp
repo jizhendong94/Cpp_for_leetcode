@@ -37,17 +37,33 @@ vector<int> findMaxRight(vector<int>& nums)
     }
 	return res;
 }
+
+//单调栈解法
+vector<int> nextGreaterElement(vector<int>& nums)
+{
+	vector<int>res(nums.size());
+	stack<int>S;
+	for(int i=nums.size()-1;i>=0;i--){  //倒着进栈
+		while(!S.empty()&& S.top()<=nums[i]) //判定个子高矮
+			S.pop();   //矮个子起开，反正也被挡住了
+		res[i]=S.empty()?-1:S.top();  //这个元素身后的第一个高个子
+		S.push(nums[i]);  //进队
+	}
+	return res;
+}
+
+
 int main()
 {
 	vector<int>nums = {1,5,3,6,4,8,9,10}; 
-	vector<int>res = findMaxRight(nums);
+	vector<int>res = nextGreaterElement(nums);
 	for(auto iter= res.begin();iter!=res.end();iter++)
 	{
 		cout<<*iter<<"\t";
 	}
 	cout<<endl;
 	vector<int>nums1 = {8,2,5,4,3,9,7,2,5};
-	vector<int>res1 = findMaxRight(nums1);
+	vector<int>res1 = nextGreaterElement(nums1);
 	for(auto iter=res1.begin();iter!=res1.end();iter++)
 	{
 		cout<<*iter<<"\t";
