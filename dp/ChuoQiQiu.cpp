@@ -32,9 +32,9 @@ int maxCoins(vector<int>& nums)
 	}
 	points.push_back(1);
 	//base case 初始化为0
-	vector<vector<int>>dp(n+1,vector<int>(n+2,0));
+	vector<vector<int>>dp(n+2,vector<int>(n+2,0));
 	//i 从下往上遍历
-	for(int i=n-1;i>=0;i--)
+	for(int i=n;i>=0;i--)
 	{
 		//j 从左往右 
 		for(int j=i+1;j<n+2;j++)

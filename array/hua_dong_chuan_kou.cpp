@@ -15,7 +15,6 @@ string minWindow(string s,string t)
 	int valid = 0;
 	//记录最小子串起始索引和长度
 	int start =0,len=INT_MAX;
-	int valid=0;
 
 	while(right<s.size()){
 		//c 是 要 移入窗口的字符

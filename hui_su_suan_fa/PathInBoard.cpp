@@ -60,7 +60,7 @@ int sum(int x,int y){
 }
 int dfs(int m,int n,int i,int j,int k)
 {
-	if(i<0||j<0||i>=m||j>=m||visited[i][j]||sum(i,j)>k) return 0;
+	if(i<0||j<0||i>=m||j>=n||visited[i][j]||sum(i,j)>k) return 0;
 	visited[i][j]=1;
 	return 1+dfs(m,n,i-1,j,k)+dfs(m,n,i+1,j,k)+
 		dfs(m,n,i,j+1,k)+dfs(m,n,i,j-1,k);
