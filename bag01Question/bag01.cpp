@@ -51,7 +51,7 @@ bool canPartition(vector<int>& nums)
     {
         for(int j=1;j<=sum;j++)
         {
-            if(j-sum[i-1]<0){
+            if(j-nums[i-1]<0){
                 dp[i][j]=dp[i-1][j];
             }
             else{
