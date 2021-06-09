@@ -2,6 +2,7 @@
 #include<vector>
 #include<map>
 #include<list>
+#include<unordered_map>
 using namespace std;
 
 /*
@@ -55,7 +56,144 @@ cache.put(1, 4);
 
 */
 
+//哈希链表 
+class Node{
+public:
+    int key,val;
+    Node* next,*pre;
+    Node(int k,int v){
+        this->key = k;
+        this->val = v;
+    }
+};
 
+class DoubleList{
+private:
+    //头尾虚节点
+    Node* head,*tail;
+    //链表元素数
+    int size;
+
+public:
+    DoubleList(){
+        //初始化双向链表数据
+        head = new Node(0,0);
+        tail = new Node(0,0);
+        head->next = tail;
+        tail->pre = head;
+        size = 0;
+    }
+
+    //尾部添加节点, 时间O(1)
+    void addLast(Node* x){
+        x->pre = tail->pre;
+        x->next = tail;
+
+        tail->pre->next = x;
+        tail->pre = x;
+        size++;
+    }   
+
+    //删除链表中的x 节点（x 一定存在）
+    //双链表，且给的是目标节点，时间O(1)
+    void remove(Node* x){
+        x->pre->next = x->next;
+        x->next->pre = x->pre;
+        size--;
+    }
+    //删除链表中的一个节点，并返回该节点 O(1)
+    Node* removeFirst(){
+        if(head->next == tail){
+            return nullptr;
+        }
+        Node* first = head->next;
+        remove(first);
+        return first;
+    }
+
+    //返回链表长度 ，时间O(1)
+    int Size(){
+        return size;
+    }
+
+};
+
+class LRUCache{
+    private:
+        //key -> Node(key,val);
+        unordered_map<int,Node*>map;
+        //Node(k1,v1) <-> Node(k2,v2) <-> ...
+        DoubleList cache;
+        //最大容量 
+        int cap;
+    public:
+        LRUCache(int capacity){
+            this->cap = capacity;
+        }
+        //将某个key提升为最近使用的
+        void makeRecently(int key){
+            if(map.count(key)){
+                Node* x = map[key];
+                //先从链表中删除这个节点
+                cache.remove(x);
+                //重新插入到链表尾部 
+                cache.addLast(x);
+            }
+        }
+        //添加最近使用的元素 
+        void addRecently(int key,int val){
+            Node* temp = new Node(key,val);
+            //链表尾部就是最近使用的元素
+            cache.addLast(temp);
+            //在map中添加key的映射
+            map[key]=temp;
+        }
+        //删除某一个key  
+        void deleteKey(int key){
+            Node* temp = map[key];
+            //从链表中删除
+            cache.remove(temp);
+            //从map中删除
+            map.erase(key);
+        }
+        //删除最久未使用的元素
+        void removeleastRecently(){
+            //链表头部的第一个元素就是最久未使用的
+            Node* deleteNode = cache.removeFirst();
+            int deleteKey=deleteNode->key;
+            //从map中删除Key
+            map.erase(deleteKey);
+        }
+
+        int get(int key){
+            if(!map.count(key)){
+                return -1;
+            }
+            //将该数据提升为最近使用的
+            makeRecently(key);
+            return map[key]->val;
+        }
+
+        void put(int key,int val){
+            //元素存在 
+            if(map.count(key)){
+                //删除旧的元素
+                deleteKey(key);
+                //新插入的数据为最近使用的元素
+                addRecently(key,val);
+                return;
+            }
+            //元素不存在
+            if(cap == cache.Size()){
+                //缓存满了，删除最久没有使用的元素
+                removeleastRecently();
+            }
+            //添加为最近使用的元素
+            addRecently(key,val);
+        }
+
+
+};
 
 
 int main()
