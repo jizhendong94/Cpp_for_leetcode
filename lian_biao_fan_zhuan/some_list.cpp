@@ -67,7 +67,7 @@ ListNode* Merge(ListNode* l1,ListNode* l2)
 ListNode* sortList(ListNode* head)
 {
     if(head == nullptr || head->next == nullptr) return head;
-    ListNode* slow = head,*fast = head->next;
+    ListNode* slow = head,*fast = head->next;//fast必须=head->next =head 不可以
     while(fast && fast->next){
         fast=fast->next->next;
         slow=slow->next;
@@ -190,7 +190,6 @@ ListNode* getIntersectionNode(ListNode* headA,ListNode* headB)
             headB=headB->next;
         }
         return headA;
-
 
     }else{
         return nullptr;

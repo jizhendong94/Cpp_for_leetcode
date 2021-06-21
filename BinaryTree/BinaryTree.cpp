@@ -142,7 +142,7 @@ void flatten(TreeNode* root) {
     TreeNode* right = root->right;
 
     //将左子树 作为右子树
-    root->left = NULL;
+    root->left = NULL;  //必须将左子树设置为nullptr
     root->right = left;
 
     //将原先的右子树接到当前右子树的末端

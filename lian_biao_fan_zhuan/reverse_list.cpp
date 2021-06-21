@@ -97,7 +97,7 @@ ListNode* reverseKGroup(ListNode* head, int k) {
     ListNode* b=head;
     for(int i=0;i<k;i++)
     {
-        if(b==NULL) return head; //
+        if(b==NULL) return head; //先判断是否为nullptr 再指向下一个指针
         b=b->next;
     }
 
@@ -183,7 +183,7 @@ int lengthLIS(vector<int>& nums)
         for(int j=0;j<i;j++)
         {
             if(nums[j]<nums[i])
-                dp[i]=max(dp[i],dp[j]+1);
+                dp[i]=max(dp[i],dp[j]+1); //转移方程 max(dp[i],dp[j]+1);
         }
     }
     int res=0;
