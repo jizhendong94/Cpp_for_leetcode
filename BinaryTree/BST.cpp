@@ -237,17 +237,99 @@ TreeNode* sortedArrayToBST(vector<int>& nums)
 }
 
 
+/*99 恢复二叉搜索树
+给你二叉搜索树的根节点 root ，该树中的两个节点被错误地交换。
+请在不改变其结构的情况下，恢复这棵树。
+
+思路：
+这里我们二叉树搜索树的中序遍历(中序遍历遍历元素是递增的)
+
+如下图所示，中序遍历顺序是 4,2,3,1，我们只要找到节点 4 和节点 1 交换顺序即可！
+
+这里我们有个规律发现这两个节点：
+第一个节点，是第一个按照中序遍历时候前一个节点大于后一个节点，
+我们选取前一个节点，这里指节点 4；
+
+第二个节点，是在第一个节点找到之后，后面出现前一个节点大于后一个节点，
+我们选择后一个节点，这里指节点 1；
+
+*/
+TreeNode* firstNode = nullptr;
+TreeNode* secondNode = nullptr;
+TreeNode* preNode = new TreeNode(INT_MAX);
+void recoverTree(TreeNode* root)
+{
+    inorder(root);
+    int temp = firstNode->val;
+    firstNode->val = secondNode->val;
+    second->val = temp;
+}
+
+void inorder(TreeNode* root)
+{
+    if(nullptr == root) return;
+    inorder(root->left);
+    if(nullptr == firstNode && preNode->val > root->val) firstNode = pre;
+    if(nullptr != firstNode && preNode->val > root->val) secondNode = root;
+    preNode = root;
+    inorder(root->right);
+}
 
 
+/*98 验证二叉搜索树
+给定一个二叉树，判断其是否是一个有效的二叉搜索树。
 
+假设一个二叉搜索树具有如下特征：
 
+节点的左子树只包含小于当前节点的数。
+节点的右子树只包含大于当前节点的数。
+所有左子树和右子树自身必须也是二叉搜索树。
 
+*/
+bool isValidBST(TreeNode* root)
+{
+    return isValidBST(root,nullptr,nullptr);
+}
 
+bool isValidBST(TreeNode* root,TreeNode* min,TreeNode* max)
+{
+    if(nullptr == root) return true;
+    if(nullptr != min && min->val >= root->val) return false;
+    if(nullptr != max && root->val >= max->val) return false;
 
+    return isValidBST(root->left,min,root)&&isValidBST(root->right,root,max);
+}
 
+/*109 有序链表转换成二叉搜索树
+给定一个单链表，其中的元素按升序排序，将其转换为高度平衡的二叉搜索树。
 
+本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。
 
+*/
 
+//思路1 ： 转换成数组  构成二叉搜索树
+
+TreeNode* sortedListToBST(ListNode* head)
+{
+    if(head == nullptr) return nullptr;
+    vector<int>temp;
+    while(head){
+        temp.push_back(head->val);
+        head=head->next;
+    }
+    return vectorToBST(temp,0,temp.size()-1);
+}
+
+TreeNode* vectorToBST(vector<int>& temp,int left,int right)
+{
+    if(left >right) return nullptr;
+    int mid = left + (right-left)/2;
+
+    TreeNode* root = new TreeNode(temp[mid]);
+    root->left = vectorToBST(temp,left,mid-1);
+    root->right = vectorToBST(temp,mid+1,right);
+    return root;
+}
 
 
 
