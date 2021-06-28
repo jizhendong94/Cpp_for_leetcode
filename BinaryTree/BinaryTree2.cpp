@@ -366,10 +366,130 @@ string tree2str(TreeNode* root)
 }
 
 
+/*623 在二叉树中增加一行
+给定一个二叉树，根节点为第1层，深度为 1。在其第 d 层追加一行值为 v 的节点。
+
+添加规则：给定一个深度值 d （正整数），针对深度为 d-1 层的每一非空节点 N，
+为 N 创建两个值为 v 的左子树和右子树。
+将 N 原先的左子树，连接为新节点 v 的左子树；将 N 原先的右子树，连接为新节点 v 的右子树。
+如果 d 的值为 1，深度 d - 1 不存在，则创建一个新的根节点 v，原先的整棵树将作为 v 的左子树。
+
+*/
+
+TreeNode* addOneRow(TreeNode* root,int val,int depth)
+{
+    if(depth == 1){
+        TreeNode* root_new = new TreeNode(val);
+        root_new->left = root;
+        return root_new;
+    }
+
+    int tree_d = 1;
+    queue<TreeNode*>q;
+    q.push(root);
+    while(!q.empty()){
+        int size = q.size();
+        while(size--){
+            TreeNode* temp = q.front();
+            q.pop();
+
+            if(tree_d == depth - 1){
+                TreeNode* temp_left = temp->left;
+                TreeNode* temp_right = temp->right;
+
+                temp->left = new TreeNode(val);
+                temp->right = new TreeNode(val);
+
+                temp->left->left = temp_left;
+                temp->right->right = temp_right;
+            }
+
+            if(temp->left) q.push(temp->left);
+            if(temp->right) q.push(temp->right);
+        }
+        tree_d++;
+        if(tree_d == depth) break;
+    }
+    return root;
+}
+
+/* 655 输出二叉树
+在一个 m*n 的二维字符串数组中输出二叉树，并遵守以下规则：
+
+1. 行数 m 应当等于给定二叉树的高度。
+2. 列数 n 应当总是奇数。
+3. 根节点的值（以字符串格式给出）应当放在可放置的第一行正中间。
+根节点所在的行与列会将剩余空间划分为两部分（左下部分和右下部分）。
+你应该将左子树输出在左下部分，右子树输出在右下部分。左下和右下部分应当有相同的大小。
+即使一个子树为空而另一个非空，你不需要为空的子树输出任何东西，
+但仍需要为另一个子树留出足够的空间。然而，
+如果两个子树都为空则不需要为它们留出任何空间。
+4. 每个未使用的空间应包含一个空的字符串""。
+5. 使用相同的规则输出子树。
+
+*/
+
+vector<vector<string>> printTree(TreeNode* root){
+    int m = getheight(root),n = pow(2,m)-1;
+    vector<vector<string>>res(m,vector<string>(n,""));
+    print(root,0,n-1,0,res);
+    return res;
+}
+
+int getheight(TreeNode* root){
+    if(nullptr == root) return 0;
+    return max(getheight(root->left),getheight(root->right)) + 1;
+}
+
+void print(TreeNode* root,int start,int end,int row,vector<vector<string>>& res)
+{
+    if(nullptr == root) return;
+    int mid = (start + end)/2;
+
+    res[row][mid] = to_string(root->val);
+
+    print(root->left,start,mid-1,row+1,res);
+    print(root->right,mid+1,end,row+1,res);
+}
 
 
+/* 662 二叉树最大宽度
+给定一个二叉树，编写一个函数来获取这个树的最大宽度。树的宽度是所有层中的最大宽度。
+这个二叉树与满二叉树（full binary tree）结构相同，但一些节点为空。
+
+每一层的宽度被定义为两个端点（该层最左和最右的非空节点，两端点间的null节点也计入长度）
+之间的长度。
+
+思路：队列元素使用pair，多用一个int值记录当前层的索引
+      左子树是父节点的index * 2,右子树是 index * 2 + 1,
+      减去start * 2 便是在该层的位置，用于防止索引太大溢出
+
+*/
 
 
+int widthOfBinaryTree(TreeNode* root)
+{
+    if(nullptr == root) return 0;
+    queue<pair<TreeNode*,int>>q;  //pair 的第二个位置记录当前是第几个节点
+    q.push({root,1});
+    int res = 0;
+
+    while(!q.empty()){
+        int count = q.size();
+        int start = q.front().second,index;//start是本层的起点，index是本层当前遍历到的节点的索引
+        
+        while(count--){
+            TreeNode* tmp = q.front().first;
+            index = q.front().second;
+            q.pop();
+
+            if(tmp->left) q.push({tmp->left,index*2-start*2}); // 防止索引位置太大溢出
+            if(tmp->right) q.push({tmp->right,index*2+1-start*2});
+        }
+        res = max(res,index-start+1);
+    }
+    return res;
+}
 
 
 
