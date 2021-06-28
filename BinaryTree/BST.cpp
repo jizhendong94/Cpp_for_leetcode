@@ -155,6 +155,44 @@ TreeNode* delNode(TreeNode* root,int key)
 	return root;
 }
 
+
+/*450  删除二叉搜索树中的节点
+给定一个二叉搜索树的根节点 root 和一个值 key，删除二叉搜索树中的 key 对应的节点，
+并保证二叉搜索树的性质不变。返回二叉搜索树（有可能被更新）的根节点的引用。
+
+一般来说，删除节点可分为两个步骤：
+
+首先找到需要删除的节点；
+如果找到了，删除它。
+说明： 要求算法时间复杂度为 O(h)，h 为树的高度。
+
+*/
+TreeNode* getMinRight(TreeNode* root){
+	while(root->left){
+		root = root->left;
+	}	
+	return root;
+}
+
+TreeNode* deleteNode(TreeNode* root,int key){
+	if(nullptr == root) return nullptr;
+
+	if(key == root->val){
+		if(root->left == nullptr) return root->right;
+		if(root->right == nullptr) return root->left;
+
+		TreeNode* minNodeOfRight = getMinRight(root->right);
+		root->val = minNodeOfRight->val;
+		root->right = deleteNode(root->right,minNodeofRight->val); //删除右边的最小节点值，不是key
+	}else if(key > root->val){
+		root->right = deleteNode(root->right,key);
+	}else if(key < root->val){  //else if 不能省略
+		root->left = deleteNode(root->left,key);
+	}
+	return root;
+}
+
+
 /*  1373 
 给你一棵以 root 为根的 二叉树 ，请你返回 任意 二叉搜索子树的最大键值和。
 
@@ -332,15 +370,79 @@ TreeNode* vectorToBST(vector<int>& temp,int left,int right)
 }
 
 
+// 链表直接转化 
+TreeNode* sortListToBST(ListNode* head){
+	TreeNode* root = nullptr;
+	if(head == nullptr) return nullptr;
+	if(head->next == nullptr){
+		root = new TreeNode(head->val);
+		return root;
+	}
+	//快慢指针找到中点
+	ListNode* slow = head;
+	ListNode* fast = head;
+	while(fast && fast->next){
+		fast = fast->next->next;
+		slow = slow->next;
+	}
+
+	//找到中点的前一个指针
+	ListNode* pre = head;
+	while(pre->next != slow) pre = pre->next;
+	
+	ListNode* headRight = slow->next;
+	root = new TreeNode(slow->val);
+	pre->next = nullptr;  //断开链表
+
+	root->right = sortListToBST(headright);
+	root->left = sortListToBST(head);
+
+	return root;
+}
 
 
+/*173 二叉搜索树迭代器
+实现一个二叉搜索树迭代器类BSTIterator ，表示一个按中序遍历二叉搜索树（BST）的迭代器：
+BSTIterator(TreeNode root) 初始化 BSTIterator 类的一个对象。BST 的根节点 root 会作为构造函数的一部分给出。指针应初始化为一个不存在于 BST 中的数字，且该数字小于 BST 中的任何元素。
+boolean hasNext() 如果向指针右侧遍历存在数字，则返回 true ；否则返回 false 。
+int next()将指针向右移动，然后返回指针处的数字。
+注意，指针初始化为一个不存在于 BST 中的数字，所以对 next() 的首次调用将返回 BST 中的最小元素。
 
+你可以假设 next() 调用总是有效的，也就是说，当调用 next() 时，BST 的中序遍历中至少存在一个下一个数字。
 
+*/
 
+//思路：我们可以对二叉树做一次完全的递归操作，获取中序遍历的全部结果，并保存在数组中，
+//随后，我们用得到的数组本身来实现迭代器。
+class BSTIterator{
+private:
+	void inorderCore(TreeNode* root,vector<int>& res){
+		if(nullptr == root) return;
+		inorder(root->left,res);
+		res.push_back(root->val);
+		inorder(root->right,res);
+	}
+	vector<int> inorder(TreeNode* root){
+		vector<int>res;
+		inorder(root,res);
+		return res;
+	}
+	vector<int>arr;
+	int idx;
+public:
+	//需要实现的函数1
+	BSTIterator(TreeNode* root):idx(0),arr(inorder(root)){
 
-
-
-
+	}
+	//需要实现的函数2
+	int next(){
+		return arr[idx++];
+	}
+	//需要实现的函数3
+	bool hasNext(){
+		return (idx<arr.size());
+	}
+};
 
 
 
