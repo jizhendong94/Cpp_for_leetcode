@@ -347,22 +347,154 @@ int minDepth(TreeNode* root)
     return depth;
 }
 
+/* 814 二叉树剪枝
+给定二叉树根结点 root ，此外树的每个结点的值要么是 0，要么是 1。
+返回移除了所有不包含 1 的子树的原二叉树。
+*/
+
+//将root这棵树剪枝，返回剪枝后的树
+TreeNode* pruneTree(TreeNode* root)
+{
+    if(nullptr == root) return nullptr;
+
+    root->left = pruneTree(root->left); //左子树剪枝，返回剪枝后的左子树
+    root->right = pruneTree(root->right);//右子树剪枝，返回剪枝后的右子树
+    //判断root节点是否需要剪掉
+    if(root->left == nullptr && root->right == nullptr && root->val == 0){
+        return nullptr;
+    }
+    //返回剪枝后的结果
+    return root;
+}
+
+/*863 二叉树中所有距离为 K 的结点
+
+给定一个二叉树（具有根结点 root）， 一个目标结点 target ，和一个整数值 K 。
+返回到目标结点 target 距离为 K 的所有结点的值的列表。 答案可以以任何顺序返回。
+
+思路：
+1. 按照例子给出的结果，这里遍历不是简单子节点，也可能是父节点的子节点（如例子里的1）
+2. 为了查找父节点，需要构建一个额外的map来保存节点的父节点，这样子就可以做三个方向的遍历：父节点，左子节点和右子节点
+3. 从target节点从三个方向做广度优先的遍历，每次距离加1，正好为k的时候，在queue里的节点就是答案
+4. 坑： 这里遍历会三个方向存在循环的问题，所以需要记录哪些结点已经遍历了
+
+*/
+
+//父节点的映射表
+unordered_map<TreeNode*,TreeNode*>node2parent;
+
+//递归方式来构造父节点信息
+void dfs(TreeNode* cur,TreeNode* parent)
+{
+    if(cur != nullptr){
+        node2parent[cur]=parent;
+        dfs(cur->left,cur);
+        dfs(cur->right,cur);
+    }
+}
+
+vector<int> distanceK(TreeNode* root,TreeNode* target,int k)
+{
+    //构建好映射表
+    dfs(root,nullptr);
+    //广度遍历使用的queue
+    queue<TreeNode*>q;
+    //避免死循环的记录遍历的点
+    unordered_set<TreeNode*>visited;
+
+    q.push(target);
+    visited.insert(target);
+    //记录当前遍历的层数，其实就是距离
+    int dist = 0;
+
+    while(!q.empty()){
+        if(dist == k){
+            vector<int>res;
+            while(!q.empty()){
+                res.push_back(q.front()->val);
+                q.pop();
+            }
+            return res;
+        }
+
+        int size = q.size(); //当前层数的节点数
+        for(int i=0;i<size;i++){
+            TreeNode* cur = q.front();
+            q.pop();
+
+            //超三个方向遍历
+            if(cur->left != nullptr &&(visited.count(root->left)==0)){
+                q.push(cur->left);
+                visited.insert(cur->left);
+            }
+
+            if(cur->right != nullptr &&(visited.count(cur->right)==0)){
+                q.push(cur->right);
+                visited.insert(cur->right);
+            }
+
+            TreeNode* parent = node2parent[cur];
+            if(parent != nullptr && visited.count(parent)==0){
+                q.push(parent);
+                visited.insert(parent);
+            }
+        }
+        //一层遍历完成距离+1
+        ++dist;
+    }
+    //默认返回空
+    return {};
+}
+
+/*865  具有所有最深节点的最小子树
+给定一个根为 root 的二叉树，每个节点的深度是 该节点到根的最短距离 。
+如果一个节点在 整个树 的任意节点之间具有最大的深度，则该节点是 最深的 。
+一个节点的 子树 是该节点加上它的所有后代的集合。
+返回能满足 以该节点为根的子树中包含所有最深的节点 这一条件的具有最大深度的节点。
 
 
+*/
 
+//一样的题目
 
+/*1123 最深叶节点的最近公共祖先
+给你一个有根节点的二叉树，找到它最深的叶节点的最近公共祖先。
 
+回想一下：
+叶节点 是二叉树中没有子节点的节点
+树的根节点的 深度 为 0，如果某一节点的深度为 d，那它的子节点的深度就是 d+1
+如果我们假定 A 是一组节点 S 的 最近公共祖先，
+S 中的每个节点都在以 A 为根节点的子树中，且 A 的深度达到此条件下可能的最大值。
 
+思路：
+*******************************************************
+// 思路：从每个树开始，获得当前节点的左右子树的最大深度
+// 深度相同，说明最深的节点在这个节点两边，那这个节点就是结果
+// 如果深度不相同，则去深度大的子树继续判断，最终就能得到结果
+*/
 
+TreeNode* subtreeWithAllDeepest(TreeNode* root)
+{
+    if(nullptr == root) return root;
+    //获取当前节点的左右子树的最大深度
+    int leftMaxDepth = getMaxDepth(root->left);
+    int rightMaxDepth = getMaxDepth(root->right);
 
+    //如果两边的最大深度相同，则这个节点就是结果
+    if(leftMaxDepth == rightMaxDepth) return root;
+    //不相等，去深度最大的子树继续找
+    if(leftMaxDepth > rightMaxDepth){
+        return subtreeWithAllDeepest(root->left);
+    }else{
+        return subtreeWithAllDeepest(root->right);
+    }
+}
 
-
-
-
-
-
-
-
+int getMaxDepth(TreeNode* root)
+{
+    if(nullptr == root) return 0;
+    return 1+max(getMaxDepth(root->left),getMaxDepth(root->right));
+}
 
 
 
