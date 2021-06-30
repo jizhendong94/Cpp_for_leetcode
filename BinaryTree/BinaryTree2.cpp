@@ -89,6 +89,40 @@ TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
 	return buildTree(inorder,0,inorder.size()-1,postorder,0,postorder.size()-1);
 }
 
+/*889 根据前序和后续遍历构造二叉树
+
+返回与给定的前序和后序遍历匹配的任何二叉树。
+ pre 和 post 遍历中的值是不同的正整数。
+
+注：前序和后续不能完全确认一颗二叉树，所以可能会有多个结果，题目只要求返回一个结果
+*/
+
+TreeNode* buildTree(vector<int>& pre,int preStart,int preEnd,vector<int>& post,int psStart,int psEnd)
+{
+    if(preStart>preEnd || psStart>psEnd) return nullptr;
+    TreeNode* root = new TreeNode(pre[preStart]);
+    if(preStart == preEnd) return root; //不能少，否则程序崩溃
+
+    int index = 0;
+    for(index = psStart;index<=psEnd;index++){
+        if(post[index] == pre[preStart+1])
+            break;
+    }
+    //index 的索引 是post 中左子树的最后一个节点位置
+    int leftsize = index-psStart;
+    root->left = buildTree(pre,preStart+1,preStart+1+leftsize,post,postStart,index);
+    root->right = bulidTree(pre,preStart+1+leftsize+1,preEnd,post,index+1,psEnd-1);
+
+    return root;
+}
+
+TreeNode* constructFromPrePost(vector<int>& pre,vector<int>& post)
+{
+    return bulidTree(pre,0,pre.size()-1,post,0,post.size()-1);
+}
+
+
+
 /*652  寻找重复的子树  labuladong
   给定一棵二叉树，返回所有重复的子树。对于同一类的重复子树，你只需要返回其中任意一棵的根结点即可。
   两棵树重复是指它们具有相同的结构以及相同的结点值。
@@ -491,7 +525,48 @@ int widthOfBinaryTree(TreeNode* root)
     return res;
 }
 
+/*894  所有可能的满二叉树 
+
+满二叉树： 如果二叉树中除了叶子结点，每个结点的度都为 2，则此二叉树称为满二叉树。
+完全二叉树： 如果二叉树中除去最后一层节点为满二叉树，且最后一层的结点依次从左到右分布，则此二叉树被称为完全二叉树。
 
 
+满二叉树是一类二叉树，其中每个结点恰好有 0 或 2 个子结点。
+返回包含 N 个结点的所有可能满二叉树的列表。 答案的每个元素都是一个可能树的根结点。
+答案中每个树的每个结点都必须有 node.val=0。
+你可以按任何顺序返回树的最终列表。
+
+思路：  首先偶数是不能构成满二叉树的。 思路是把总node数分别左边，根，右边进行递归，
+        如7个node可以分成1,1,5；3,1,5；5,1,1（左,根,右）。 5个node又可以分为1,1,3和3,1,1。
+        3个node又可以分为1,1,1。 1个node直接返回。
+
+
+*/
+vector<TreeNode*> allPossibleFBT(int n)
+{
+    vector<TreeNode*>res;
+    if(n%2 == 0) return res;
+
+    if(n == 1){
+        TreeNode* head = new TreeNode(0);
+        res.push_back(head);
+        return res;
+    }
+
+    for(int i=1;i<n;i++){
+        vector<TreeNode*>left = allPossibleFBT(i);
+        vector<TreeNode*>right = allPossibleFBT(n-i-1); //- 根节点
+
+        for(TreeNode* l :left){
+            for(TreeNode* r:right){
+                TreeNode* head = new TreeNode(0);
+                head->left = l;
+                head->right = r;
+                res.push_back(head);
+            }
+        }
+    }
+    return res;
+}
 
 
