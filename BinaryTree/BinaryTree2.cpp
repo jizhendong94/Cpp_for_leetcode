@@ -539,7 +539,7 @@ int widthOfBinaryTree(TreeNode* root)
 思路：  首先偶数是不能构成满二叉树的。 思路是把总node数分别左边，根，右边进行递归，
         如7个node可以分成1,1,5；3,1,5；5,1,1（左,根,右）。 5个node又可以分为1,1,3和3,1,1。
         3个node又可以分为1,1,1。 1个node直接返回。
-
+对于 N≥3，我们可以设定如下的递归策略:FBT(N)= [对于所有的x，所有的树的左子结点来自FBT(x) 而右子结点来自FBT(N−1−x),减去一个根节点。
 
 */
 vector<TreeNode*> allPossibleFBT(int n)
@@ -553,7 +553,7 @@ vector<TreeNode*> allPossibleFBT(int n)
         return res;
     }
 
-    for(int i=1;i<n;i++){
+    for(int i=1;i<n;i += 2){
         vector<TreeNode*>left = allPossibleFBT(i);
         vector<TreeNode*>right = allPossibleFBT(n-i-1); //- 根节点
 
@@ -568,5 +568,202 @@ vector<TreeNode*> allPossibleFBT(int n)
     }
     return res;
 }
+
+/*919 完全二叉树插入器
+
+完全二叉树是每一层（除最后一层外）都是完全填充（即，节点数达到最大）的，并且所有的节点都尽可能地集中在左侧。
+
+设计一个用完全二叉树初始化的数据结构 CBTInserter，它支持以下几种操作：
+
+CBTInserter(TreeNode root) 使用头节点为 root 的给定树初始化该数据结构；
+
+CBTInserter.insert(int v)  向树中插入一个新节点，节点类型为 TreeNode，值为 v 。
+使树保持完全二叉树的状态，并返回插入的新节点的父节点的值；
+
+CBTInserter.get_root() 将返回树的头节点。
+
+*/
+class CBTInsert{
+public:
+	TreeNode* root = nullptr;
+	queue<TreeNode*>q;
+	CBTInserter(TreeNode* root){
+		this->root = root;
+		q.push(root);
+		//层序遍历，找到第一个缺失左子树，或者右子树的节点
+		while(!q.empty()){
+			TreeNode* cur = q.front();
+			if(cur->left){
+				q.push(cur->left);
+			}else{
+				break;
+			}
+
+			if(cur->right){
+				q.push(cur->right);
+			}else{
+				break;
+			}
+			q.pop();  //队列最后的头元素，一定是缺少左子树或右子树的节点。
+		}
+	}
+
+	int insert(int v){
+		TreeNode* cur = q.front();
+		//如果左子树为空，插入到左子树上
+		if(!cur->left){
+			cur->left = new TreeNode(v);
+			q.push(cur->left);
+		//如果右子树为空，插入到右子树上，并将当前节点弹出队列。
+		}else{
+			cur->right = new TreeNode(v);
+			q.push(cur->right);
+			q.pop();
+		}
+		return cur->val;
+	}
+
+	TreeNode* get_root(){
+		return root;
+	}
+
+};
+
+/*951 翻转等价二叉树
+
+我们可以为二叉树 T 定义一个翻转操作，如下所示：选择任意节点，然后交换它的左子树和右子树。
+只要经过一定次数的翻转操作后，能使 X 等于 Y，我们就称二叉树 X 翻转等价于二叉树 Y。
+编写一个判断两个二叉树是否是翻转等价的函数。这些树由根节点 root1 和 root2 给出。
+
+思路：也就是当 root1 和 root2 的值相等的情况下，需要继续判断 root1 的孩子节点是不是跟 root2 的孩子节点相当。
+	  因为可以做翻转操作，所以这里有两种情况需要去判断。
+递归分为两种情况：
+	  取LL&&RR：flipEquiv(root1.left, root2.left) && flipEquiv(root1.right, root2.right)
+	  取LR&RL： flipEquiv(root1.left, root2.right) && flipEquiv(root1.right, root2.left)
+*/
+
+bool flipEquiv(TreeNode* root1,TreeNode* root2)
+{
+	if(roo1 == nullptr && root2 == nullptr) return true;
+	if(root1 == nullptr || root2 == nullptr) return false;
+
+	if(root1->val == root2->val){
+		return (flipEquiv(root1->left,root2->left) && flipEquiv(root1->right,root2->right))||
+		(flipEquiv(root1->left,root2->right)&&flipEquiv(root1->right,root2->left));
+	}
+	return false;
+}
+
+
+/*958 二叉树的完全性检验
+
+给定一个二叉树，确定它是否是一个完全二叉树。
+
+若设二叉树的深度为 h，除第 h 层外，其它各层 (1～h-1) 的结点数都达到最大个数，
+第 h 层所有的结点都连续集中在最左边，这就是完全二叉树。（注：第 h 层可能包含 1~ 2h 个节点。）
+
+*/
+
+bool isCompleteTree(TreeNode* root)
+{
+	bool flag = false;
+	queue<TreeNode*>q;
+	q.push(root);
+	while(q.empty()){
+		TreeNode* temp = q.front();
+		q.pop();
+
+		if(temp == nullptr) flag = true;
+
+		if(flag && temp) return false; //遇到nullptr,后面应该都是nullptr
+
+		if(temp){   //与层次遍历不同，只需要判断temp 是否是nullptr 
+			q.push(temp->left);
+			q.push(temp->right);
+		}
+	}
+	return true;
+}
+
+/*968 监控二叉树
+
+给定一个二叉树，我们在树的节点上安装摄像头。
+
+节点上的每个摄影头都可以监视其父对象、自身及其直接子对象。
+
+计算监控树的所有节点所需的最小摄像头数量。
+
+*/
+int res = 0;
+
+int minCameraCover(TreeNode* root)
+{
+	if(nullptr == root) return 0;
+	if(dfs(root) == 2) res += 1;
+	return res;
+}
+
+//0：该节点安装了监视器  1：该节点可观，但是没有监视器 2：该节点不可观
+int dfs(TreeNode* root)
+{
+	if(nullptr == 0) return 1;
+
+	int left = dfs(root->left);
+	int right = dfs(root->right);
+
+	if(left == 2 || right == 2){
+		res+=1;
+		return 0;
+	}else if(left == 0 || right ==0){
+		return 1;
+	}else{
+		return 2;
+	}
+}
+
+/*971 反转二叉树以匹配先序遍历
+给你一棵二叉树的根节点 root ，树中有 n 个节点，每个节点都有一个不同于其他节点且处于 1 到 n 之间的值。
+
+另给你一个由 n 个值组成的行程序列 voyage ，表示 预期 的二叉树 先序遍历 结果。
+
+*/
+
+int index = 0; //全局索引比较方便
+vector<int>res;
+
+vector<int> flipMatchVoyage(TreeNode* root,vector<int>vogage)
+{
+	if(dfs(root,vogage))
+		return res;
+	return vector<int>{-1};
+}
+
+bool dfs(TreeNode* root,vector<int>& voyage)
+{
+	if(nullptr == root || index >= vogage.size())  return true;
+	//当前节点不符合预期，肯定不符合
+	if(root->val != voyage[index]) return false;
+
+	index++;
+	//若先序遍历与预期不符合，尝试返回交换后的遍历结果
+	if(nullptr != root->left && root->left->val != vogage[index]){
+		res.push_back(root->val);//记录这次交换
+		return dfs(root->right,vogage)&&dfs(root->left,vogage);
+	}else{
+		return dfs(root->left,vogage)&&dfs(root->right,vogage);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
